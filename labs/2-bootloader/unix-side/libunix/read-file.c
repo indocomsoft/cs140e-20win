@@ -11,8 +11,26 @@
 // make sure to cleanup!
 uint8_t* read_file(unsigned* size, const char* name)
 {
-    uint8_t* buf = 0;
+    struct stat file_stat;
+    int fd;
+    uint8_t* buf;
 
-    unimplemented();
+    if (stat(name, &file_stat) == -1) {
+        sys_die(stat, "Unable to stat file <%s>\n", name);
+    }
+    *size = file_stat.st_size;
+
+    if ((buf = calloc(1, roundup(file_stat.st_size, 4))) == NULL) {
+        sys_die(malloc, "Failed to allocate memory");
+    }
+
+    if ((fd = open(name, O_RDONLY)) == -1) {
+        sys_die(open, "Unable to open file <%s>\n", name);
+    }
+
+    if (read(fd, buf, file_stat.st_size) == -1) {
+        sys_die(read, "Unable to read file <%s>\n", name);
+    }
+
     return buf;
 }

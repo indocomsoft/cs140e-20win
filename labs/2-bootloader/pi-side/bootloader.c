@@ -16,6 +16,8 @@
  */
 #include "rpi.h"
 
+#define BOOTLOADER_BASE 0x200000
+
 #define __SIMPLE_IMPL__
 #include "../shared-code/simple-boot.h" // holds crc32
 
@@ -114,18 +116,35 @@ void notmain(void)
 
     // 2. expect: [PUT_PROG_INFO, addr, nbytes, cksum]
     //    we echo cksum back in step 4 to help debugging.
+    if (get_uint() != PUT_PROG_INFO)
+        die(BOOT_ERROR);
+
+    unsigned int addr = get_uint();
+    unsigned int nbytes = get_uint();
+    unsigned int cksum = get_uint();
 
     // 3. If the binary will collide with us, abort.
     //    you can assume that code must be below where the booloader code
     //    gap starts.
+    unsigned int endpos = addr + nbytes;
+    if (endpos > BOOTLOADER_BASE)
+        die(BAD_CODE_ADDR);
 
     // 4. send [GET_CODE, cksum] back.
+    put_uint(GET_CODE);
+    put_uint(cksum);
 
     // 5. expect: [PUT_CODE, <code>]
     //  read each sent byte and write it starting at
     //  ARMBASE using PUT8
+    unsigned int pos = addr;
+    while (pos < endpos)
+        PUT8(pos++, get_byte());
 
     // 6. verify the cksum of the copied code.
+    unsigned int copy_cksum = crc32((void*)addr, nbytes);
+    if (copy_cksum != cksum)
+        die(BAD_CODE_CKSUM);
 
     /****************************************************************
      * add your code above: don't modify below unless you want to
