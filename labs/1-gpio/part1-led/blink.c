@@ -1,19 +1,19 @@
 /*
- * write code to allow blinking using arbitrary pins.    
+ * write code to allow blinking using arbitrary pins.
  * Implement:
- *	- gpio_set_output(pin) --- set GPIO <pin> as an output (vs input) pin.
- *	- gpio_set_on(pin) --- set the GPIO <pin> on.
- * 	- gpio_set_off(pin) --- set the GPIO <pin> off.
- * Use the minimal number of loads and stores to GPIO memory.  
+ *  - gpio_set_output(pin) --- set GPIO <pin> as an output (vs input) pin.
+ *  - gpio_set_on(pin) --- set the GPIO <pin> on.
+ *  - gpio_set_off(pin) --- set the GPIO <pin> off.
+ * Use the minimal number of loads and stores to GPIO memory.
  *
  * start.s defines a of helper functions (feel free to look at the assembly!  it's
  *  not tricky):
- *      uint32_t get32(volatile uint32_t *addr) 
+ *      uint32_t get32(volatile uint32_t *addr)
  *              --- return the 32-bit value held at <addr>.
  *
- *      void put32(volatile uint32_t *addr, uint32_t v) 
+ *      void put32(volatile uint32_t *addr, uint32_t v)
  *              -- write the 32-bit quantity <v> to <addr>
- * 
+ *
  * Check-off:
  *  1. get a single LED to blink.
  *  2. attach an LED to pin 19 and another to pin 20 and blink in opposite order (i.e.,
@@ -25,20 +25,26 @@
 void nop(void);
 
 // countdown 'ticks' cycles; the asm probably isn't necessary.
-void delay(unsigned ticks) {
-    while(ticks-- > 0)
+void delay(unsigned ticks)
+{
+    while (ticks-- > 0)
         nop();
 }
 
 // when you run should blink 10 times. will have to restart the pi by pulling the
 // usb connection out.
-void notmain(void) {
-    int led = 20;
-    gpio_set_output(led);
-    for(int i = 0; i < 10; i++) {
-        gpio_set_on(led);
+void notmain(void)
+{
+    int led20 = 20;
+    int led21 = 21;
+    gpio_set_output(led20);
+    gpio_set_output(led21);
+    for (int i = 0; i < 10; i++) {
+        gpio_set_on(led20);
+        gpio_set_off(led21);
         delay(1000000);
-        gpio_set_off(led);
+        gpio_set_off(led20);
+        gpio_set_on(led21);
         delay(1000000);
     }
 }
