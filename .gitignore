@@ -2,6 +2,8 @@
 *.bak
 *.bin
 *.list
+*.img
+my-install
 # .gitignore
 .DS_Store
 
