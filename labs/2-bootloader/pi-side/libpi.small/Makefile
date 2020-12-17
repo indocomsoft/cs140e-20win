@@ -30,7 +30,3 @@ clean :
 depend: 
 	makedepend $(SRC)
 # DO NOT DELETE
-
-reboot.o: rpi.h
-timer.o: rpi.h
-uart.o: gpio.h mem-barrier.h
