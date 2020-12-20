@@ -27,7 +27,7 @@ all: libpi $(NAME).bin
 
 # is there a better way to do this?
 libpi: $(LPP)/Makefile
-	make -C $(LPP)
+	$(MAKE) -C $(LPP)
 
 $(NAME).bin: $(MEMMAP) $(OBJS)
 	$(LD) $(OBJS) -T $(LPP)/memmap -o $(NAME).elf  $(LPI)
@@ -37,11 +37,11 @@ $(NAME).bin: $(MEMMAP) $(OBJS)
 run:
 	my-install $(NAME).bin
 
-tags: 
+tags:
 	ctags *.[chSs] */*.[chSs]
 
 clean:
-	rm -rf $(BUILD_DIR) $(NAME) *~ tags *.o *.bin *.elf *.list *.img Makefile.bak 
+	rm -rf $(BUILD_DIR) $(NAME) *~ tags *.o *.bin *.elf *.list *.img Makefile.bak
 
 .PHONY: clean all tags libpi  run
 
@@ -82,10 +82,9 @@ $(BUILD_DIR)/%.d: %.S Makefile
 $(BUILD_DIR)/%.d: ;
 .PRECIOUS: $(BUILD_DIR)/%.d
 
-# *unbelievable*: make clean doesn't skip this include even though the 
+# *unbelievable*: make clean doesn't skip this include even though the
 # target is after.
 #   https://www.gnu.org/software/make/manual/html_node/Goals.html
 ifneq ($(MAKECMDGOALS),clean)
 -include $(DEPS)
 endif
-

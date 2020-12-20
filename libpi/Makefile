@@ -35,11 +35,11 @@ OBJS := $(OUR_OBJS)  $(YOUR_OBJS)
 
 OBJS := $(foreach o, $(OBJS), $(BUILD_DIR)/$(notdir $o)) $(EXTRA_OBJS)
 # Get all depend files by replacing extensions.  we over dep on all headers.
-DEPS := $(OBJS:.o=.d)  $(BUILD_DIR)/$(START).d 
+DEPS := $(OBJS:.o=.d)  $(BUILD_DIR)/$(START).d
 
 HDRS := $(wildcard ./*.h ./*/*.h)
 
-all: $(TARGET) $(START).o 
+all: $(TARGET) $(START).o
 
 # we bundle start.s with the library: just make different ones for each
 # different start so that the library is internally consistent.
@@ -61,7 +61,7 @@ $(BUILD_DIR)/%.o : %.c $(BUILD_DIR)/%.d
 
 # XXX: I think we need this to catch errors in .S as well.
 $(BUILD_DIR)/%.o : %.S
-$(BUILD_DIR)/%.o : %.S $(BUILD_DIR)/%.d 
+$(BUILD_DIR)/%.o : %.S $(BUILD_DIR)/%.d
 	$(CC) $(CPP_ASFLAGS) $<
 
 # Rules to automatically generate dependencies and put in build directory
@@ -85,19 +85,19 @@ $(BUILD_DIR)/%.d: %.S ./Makefile
 $(BUILD_DIR)/%.d: ;
 .PRECIOUS: $(BUILD_DIR)/%.d
 
-# *unbelievable*: make clean doesn't skip this include even though the 
+# *unbelievable*: make clean doesn't skip this include even though the
 # target is after.
 #   https://www.gnu.org/software/make/manual/html_node/Goals.html
 ifneq ($(MAKECMDGOALS),clean)
 -include $(DEPS)
 endif
 
-ctags: 
+ctags:
 	ctags *.[chSs] */*.[chSs]
 
 clean:
-	rm -rf $(BUILD_DIR) $(TARGET) *~ $(TARGET).list tags cs140e-start.o 
-	make   --no-print-directory -C libc clean
-	make   --no-print-directory -C cs140e-src clean
+	rm -rf $(BUILD_DIR) $(TARGET) *~ $(TARGET).list tags cs140e-start.o
+	$(MAKE)   --no-print-directory -C libc clean
+	$(MAKE)   --no-print-directory -C cs140e-src clean
 
 .PHONY: clean all ctags

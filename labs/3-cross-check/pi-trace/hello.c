@@ -3,27 +3,29 @@
 #include "rpi.h"
 #include "trace.h"
 
-void notmain(void) {
+void notmain(void)
+{
     uart_init();
 
     printk("about to trace gpio_read(20):\n");
-    trace_start(0);
+    trace_start(1);
     int v = gpio_read(20);
-    trace_stop();
+    trace_dump(1);
     printk("done: gpio_read(20)=%d\n", v);
 
     // make the above nicer so we can easily trace a function/chunk of code.
-#   define stringify(_x) #_x
+#define stringify(_x) #_x
 
-#   define trace_fn(fn) do {                                    \
-        printk("about to trace: <%s>\n", stringify(fn));        \
-        trace_start(0);                                         \
-        fn;                                                     \
-        trace_stop();                                           \
-        printk("done: <%s>\n", stringify(fn));                  \
-    } while(0)
+#define trace_fn(fn)                                     \
+    do {                                                 \
+        printk("about to trace: <%s>\n", stringify(fn)); \
+        trace_start(1);                                  \
+        fn;                                              \
+        trace_dump(1);                                   \
+        printk("done: <%s>\n", stringify(fn));           \
+    } while (0)
 
-    // you can easily trace anything. 
+    // you can easily trace anything.
     //
     // i would *ALWAY* recommend doing this approach when you rewrite something
     // to make it cleaner.
@@ -31,10 +33,10 @@ void notmain(void) {
     //   2. incrementally modify, re-tracing and checking.
     //   3. profit.
     //
-    // a huge amount of embedded code can be improved in this way.  
+    // a huge amount of embedded code can be improved in this way.
     // start with working-but-ugly.  rewrite to working-and-clean while
     // verifing they do exactly the same read/writes to exactly the sme
-    // locations/values in exactly the same order.  
+    // locations/values in exactly the same order.
     trace_fn(gpio_read(20));
     trace_fn(gpio_set_input(20));
     trace_fn(gpio_set_output(20));

@@ -1,7 +1,7 @@
 NAME := hello
 TNAME = $(NAME).trace
 # add the other functions you want to trace to this line.
-TRACE_FNS = GET32 #  PUT32 get32 put32
+TRACE_FNS = GET32 PUT32 get32 put32
 # turns them into the right linker flag arguments.
 TRACE_FLAGS := $(foreach o, $(TRACE_FNS), --wrap=$o)
 
@@ -20,7 +20,7 @@ BUILD_DIR := ./objs
 # if you want to compile everything in a directory, do something like this.
 #   SOURCES := $(wildcard ./*.c)
 #   OBJS := $(patsubst %.c, %.o, $(SOURCES))
-OBJS := $(NAME).o 
+OBJS := $(NAME).o
 # this is putting the objects in the BUILD_DIR
 OBJS := $(foreach o, $(OBJS), $(BUILD_DIR)/$(notdir $o))
 
@@ -49,11 +49,11 @@ $(TNAME).bin: $(MEMMAP) $(OBJS) $(TRACE_OBJS)
 run:
 	my-install $(NAME).bin
 
-tags: 
+tags:
 	ctags *.[chSs] */*.[chSs]
 
 clean:
-	rm -rf $(BUILD_DIR) $(NAME) *~ tags *.o *.bin *.elf *.list *.img Makefile.bak 
+	rm -rf $(BUILD_DIR) $(NAME) *~ tags *.o *.bin *.elf *.list *.img Makefile.bak
 
 .PHONY: clean all tags libpi  run
 
@@ -94,10 +94,9 @@ $(BUILD_DIR)/%.d: %.S Makefile
 $(BUILD_DIR)/%.d: ;
 .PRECIOUS: $(BUILD_DIR)/%.d
 
-# *unbelievable*: make clean doesn't skip this include even though the 
+# *unbelievable*: make clean doesn't skip this include even though the
 # target is after.
 #   https://www.gnu.org/software/make/manual/html_node/Goals.html
 ifneq ($(MAKECMDGOALS),clean)
 -include $(DEPS)
 endif
-
