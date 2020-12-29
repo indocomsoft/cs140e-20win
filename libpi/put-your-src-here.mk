@@ -2,12 +2,12 @@
 # (the makefile will figure out how to produce it).
 #
 # if you add gpio.o or uart.o remove it from EXTRA_OBJS
-YOUR_OBJS = gpio.o
+YOUR_OBJS = gpio.o \
+						uart.o
 
 # these are initial .o's we give you: to use your own, remove them
 # and add yours
-EXTRA_OBJS= cs140e-objs/uart.o \
-            cs140e-objs/gpio-int.o  \
+EXTRA_OBJS= cs140e-objs/gpio-int.o  \
             cs140e-objs/kmalloc.o \
             cs140e-objs/sw-uart.o \
             cs140e-objs/uart-int.o \
